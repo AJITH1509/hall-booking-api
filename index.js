@@ -7,7 +7,7 @@ const app = express();
 
 const PORT = process.env.PORT;
 
-const MONGO_URL = "mongodb://127.0.0.1";
+const MONGO_URL = process.env.MONGO_URL;
 const client = new MongoClient(MONGO_URL); // dial
 // Top level await
 await client.connect(); // call
@@ -18,15 +18,16 @@ app.get("/", function (request, response) {
 });
 
 app.post("/createroom", express.json(), function (request, response) {
-  const { seats, amentities, price } = request.body;
+  const { seats, amentities, price, roomId } = request.body;
   const result = client.db("b42wd2").collection("rooms").insertOne({
     seats: seats,
     amentities: amentities,
     price: price,
+    roomId: roomId,
   });
 
   result
-    ? response.send(result)
+    ? response.send({ message: "room created successfully" })
     : response.status(404).send({ message: "not found" });
 });
 
